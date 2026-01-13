@@ -19,16 +19,20 @@ public class Fruit {
     private Long id;
 
     @Column(unique = true)
-    @NotBlank
-    private  String name;
+    @NotBlank(message = "Fruit name is mandatory")
+    private String name;
 
-    @NotNull
-    @Min(1)
-    private  Integer weightInKilos;
+    @NotNull(message = "Weight is mandatory")
+    @Min(value = 1, message = "Weight must be at least 1kg")
+    private Integer weightInKilos;
 
-
-    @ManyToOne
-    @JoinColumn(name = "provider_id",nullable = false)
-    @NotNull
+    /**
+     * Establish a Many-to-One relationship with Provider.
+     * We use the Provider entity object instead of a simple Long ID
+     * to leverage JPA's object-relational mapping capabilities.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "provider_id", nullable = false)
+    @NotNull(message = "Provider must be specified")
     private Provider provider;
 }
