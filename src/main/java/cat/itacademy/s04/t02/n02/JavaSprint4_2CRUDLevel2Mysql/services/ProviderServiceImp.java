@@ -2,10 +2,14 @@ package cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.services;
 
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderRequest;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderResponse;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.eneities.Provider;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ProviderExistsException;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.ProviderRepository;
 import lombok.AllArgsConstructor;
 import org.hibernate.annotations.SecondaryRow;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -14,7 +18,22 @@ public class ProviderServiceImp implements ProviderService{
 
     @Override
     public ProviderResponse createProvider(ProviderRequest request) {
-        return null;
+        Objects.requireNonNull(request,"Request cannot be null");
+        if (request.name()==null||request.name().isBlank()) {
+            throw new IllegalArgumentException("Provider name cannot be empty");
+        }
+        if (providerRepository.existsByName(request.name())) {
+            throw new ProviderExistsException("Provider already exists.");
+        }
+        Provider provider = new Provider(null,request.name(),request.country());
+
+        Provider savedProvider = providerRepository.save(provider);
+
+        ProviderResponse response = new ProviderResponse(savedProvider.getId(),
+                savedProvider.getName(),
+                savedProvider.getCountry());
+
+        return response;
     }
 
    /* @Override
