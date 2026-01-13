@@ -2,14 +2,15 @@ package cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.services;
 
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.FruitRequest;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.FruitResponse;
-import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.eneities.Fruit;
-import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.eneities.Provider;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.entities.Fruit;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.entities.Provider;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ProviderNotExistsException;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.FruitRepository;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.ProviderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,17 +43,30 @@ public class FruitServiceImp implements FruitService{
         Fruit savedFruit = fruitRepository.save(fruit);
 
         // Map the persisted entity back to a Response DTO
-        return new FruitResponse(
-                savedFruit.getId(),
-                savedFruit.getName(),
-                savedFruit.getWeightInKilos(),
-                savedFruit.getProvider().getId(),
-                savedFruit.getProvider().getName()
-        );
+        return getFruitResponse(savedFruit);
     }
 
     @Override
-    public List<FruitResponse> findFruitByProviderName(String name) {
-        return List.of();
+    public List<FruitResponse> findFruitsByProviderName(String name) {
+        if (name==null||name.trim().isBlank()) {
+            throw new IllegalArgumentException("Provider name cannot be empty");
+        }
+        if (!providerRepository.existsByName(name)) {
+            throw new ProviderNotExistsException("Provider does not exist with name: " + name);
+        };
+
+        return fruitRepository.findByProviderName(name)
+                .stream()
+                .map(this::getFruitResponse)
+                .toList();
     }
+
+    private FruitResponse getFruitResponse(Fruit fruit) {
+        return new FruitResponse(
+                fruit.getId(),
+                fruit.getName(),
+                fruit.getWeightInKilos(),
+                fruit.getProvider().getId(),
+                fruit.getProvider().getName());
+            }
 }
