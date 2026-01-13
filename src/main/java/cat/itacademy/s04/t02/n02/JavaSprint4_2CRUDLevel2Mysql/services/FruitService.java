@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface FruitService {
     FruitResponse createFruit(FruitRequest request);
-    List<FruitResponse> findFruitByProviderName(String name);
+    List<FruitResponse> findFruitsByProviderName(String name);
 }

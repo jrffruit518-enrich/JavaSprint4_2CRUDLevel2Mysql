@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface FruitRepository extends JpaRepository<Fruit, Long> {
-    boolean existsByName(String name);
     List<Fruit> findByProviderId(Long providerId);
     List<Fruit> findByProviderName(String providerName);
 }
