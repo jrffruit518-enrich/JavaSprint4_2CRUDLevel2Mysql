@@ -2,7 +2,6 @@ package cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.controllers;
 
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderRequest;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderResponse;
-import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.eneities.Provider;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.services.ProviderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
