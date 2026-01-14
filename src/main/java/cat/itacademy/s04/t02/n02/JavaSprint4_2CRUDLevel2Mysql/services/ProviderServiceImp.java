@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @AllArgsConstructor
@@ -65,6 +67,11 @@ public class ProviderServiceImp implements ProviderService{
 
         providerRepository.deleteById(id);
 
+    }
+
+    @Override
+    public List<ProviderResponse> findAllProviders() {
+        return providerRepository.findAll().stream().map(this::getProviderResponse).toList();
     }
 
     private ProviderResponse getProviderResponse(Provider provider) {

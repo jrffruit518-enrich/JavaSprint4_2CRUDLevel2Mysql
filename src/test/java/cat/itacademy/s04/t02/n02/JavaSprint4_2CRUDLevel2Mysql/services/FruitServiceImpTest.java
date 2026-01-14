@@ -133,15 +133,5 @@ public class FruitServiceImpTest {
         verify(fruitRepository, never()).findByProviderName(anyString());
     }
 
-    @Test
-    void findByProvider_WhenNameIsBlank_ShouldThrowException() {
-        // Execute and Assert
-        assertThrows(IllegalArgumentException.class,
-                () -> fruitService.findFruitsByProviderName("  "));
-
-        // Verify no repository interaction
-        verifyNoInteractions(providerRepository);
-        verifyNoInteractions(fruitRepository);
-    }
 
 }

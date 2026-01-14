@@ -31,4 +31,9 @@ public class FruitController {
         return fruitService.findFruitsByProviderName(name);
 
     }
+
+    @GetMapping
+    public List<FruitResponse> findAllFruits() {
+       return fruitService.findAllFruits();
+    }
 }

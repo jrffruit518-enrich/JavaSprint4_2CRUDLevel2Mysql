@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post; // 关键：使用 Servlet 版本的 post
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath; // 关键：使用 MockMvcResultMatchers 的 jsonPath
 
@@ -98,8 +99,10 @@ public class FruitControllerTest {
         when(fruitService.findFruitsByProviderName(providerName)).thenReturn(List.of(response));
 
         // Perform GET request and Assert
-        mockMvc.perform(get("/fruit/by-provider/{name}", providerName)
+        mockMvc.perform(get("/fruits/by-provider")
+                        .param("name", providerName)
                         .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Apple"))
                 .andExpect(jsonPath("$[0].providerName").value(providerName));
@@ -114,7 +117,9 @@ public class FruitControllerTest {
                 .thenThrow(new ResourceNotFoundException("Provider not found"));
 
         // Perform GET request and Assert
-        mockMvc.perform(get("/fruit/by-provider/{name}", providerName))
+        mockMvc.perform(get("/fruits/by-provider")
+                .param("name", providerName))
+                .andDo(print())
                 .andExpect(status().isNotFound())
                 // Check if GlobalExceptionHandler works
                 .andExpect(jsonPath("$.message").value("Provider not found"))

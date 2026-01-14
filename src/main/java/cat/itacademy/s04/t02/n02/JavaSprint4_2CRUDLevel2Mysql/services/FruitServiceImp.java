@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class FruitServiceImp implements FruitService{
+public class FruitServiceImp implements FruitService {
 
     private final FruitRepository fruitRepository;
     private final ProviderRepository providerRepository;
@@ -23,7 +23,7 @@ public class FruitServiceImp implements FruitService{
     @Override
     @Transactional
     public FruitResponse createFruit(FruitRequest request) {
-    // Business Logic: The provider must exist in our system to associate it with a fruit
+        // Business Logic: The provider must exist in our system to associate it with a fruit
         Provider provider = providerRepository.findById(request.providerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Provider does not exist with ID: " + request.providerId()));
 
@@ -41,7 +41,8 @@ public class FruitServiceImp implements FruitService{
     public List<FruitResponse> findFruitsByProviderName(String name) {
         if (!providerRepository.existsByName(name)) {
             throw new ResourceNotFoundException("Provider does not exist with name: " + name);
-        };
+        }
+        ;
 
         return fruitRepository.findByProviderName(name)
                 .stream()
@@ -49,7 +50,10 @@ public class FruitServiceImp implements FruitService{
                 .toList();
     }
 
-
+    @Override
+    public List<FruitResponse> findAllFruits() {
+        return fruitRepository.findAll().stream().map(this::getFruitResponse).toList();
+    }
 
     private FruitResponse getFruitResponse(Fruit fruit) {
         return new FruitResponse(
@@ -58,6 +62,7 @@ public class FruitServiceImp implements FruitService{
                 fruit.getWeightInKilos(),
                 fruit.getProvider().getId(),
                 fruit.getProvider().getName());
-            }
+    }
+
 
 }

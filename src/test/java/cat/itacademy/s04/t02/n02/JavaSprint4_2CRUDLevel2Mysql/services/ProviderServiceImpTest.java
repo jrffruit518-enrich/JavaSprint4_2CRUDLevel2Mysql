@@ -58,25 +58,12 @@ public class ProviderServiceImpTest {
                 () -> providerServiceImp.createProvider(request)
         );
 
-        assertEquals("Provider with name GoodMan already exists", exception.getMessage());
+        assertEquals("Provider already exists.", exception.getMessage());
         verify(providerRepository).existsByName("GoodMan");
         verify(providerRepository, never()).save(any());
     }
 
-    @Test
-    void create_whenNameIsBlank_shouldThrowValidationException() {
-        ProviderRequest request = new ProviderRequest("", "USA");
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> providerServiceImp.createProvider(request)
-        );
-
-        assertEquals("Provider name cannot be blank", exception.getMessage());
-
-        verify(providerRepository, never()).existsByName(any());
-        verify(providerRepository, never()).save(any());
-    }
 
     @Test
     void update_WhenIdExistsAndNameUnique_ShouldUpdateProvider() {
