@@ -3,7 +3,8 @@ package cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.services;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderRequest;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderResponse;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.entities.Provider;
-import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ProviderExistsException;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.EntityExistsException;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.EntityNotFoundException;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.ProviderRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class ProviderServiceImp implements ProviderService{
     @Override
     public ProviderResponse createProvider(ProviderRequest request) {
         if (providerRepository.existsByName(request.name())) {
-            throw new ProviderExistsException("Provider already exists.");
+            throw new EntityExistsException("Provider already exists.");
         }
         Provider provider = new Provider(null,request.name(),request.country());
 
@@ -30,13 +31,12 @@ public class ProviderServiceImp implements ProviderService{
         return response;
     }
 
-   /* @Override
-    public ProviderResponse findByName(String name) {
-        return null;
-    }*/
 
     @Override
     public ProviderResponse updateProviderById(Long id, ProviderRequest request) {
+        if (!providerRepository.existsById(id)) {
+            throw new EntityNotFoundException()
+        }
         return null;
     }
 

@@ -17,16 +17,17 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(500, exception.getMessage(), LocalDateTime.now());
     }
 
-    @ExceptionHandler(ProviderExistsException.class)
+    @ExceptionHandler(EntityExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleProviderExists(ProviderExistsException e) {
+    public ErrorResponse handleProviderExists(EntityExistsException e) {
         return new ErrorResponse(409, e.getMessage(), LocalDateTime.now());
     }
-    @ExceptionHandler(ProviderNotExistsException.class)
+    @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleProviderNotExists(ProviderNotExistsException e) {
+    public ErrorResponse handleProviderNotExists(EntityNotFoundException e) {
         return new ErrorResponse(404, e.getMessage(), LocalDateTime.now());
     }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

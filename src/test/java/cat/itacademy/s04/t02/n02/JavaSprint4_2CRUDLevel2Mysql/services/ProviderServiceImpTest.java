@@ -3,8 +3,8 @@ package cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.services;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderRequest;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderResponse;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.entities.Provider;
-import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ProviderExistsException;
-import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ProviderNotExistsException;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.EntityExistsException;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.EntityNotFoundException;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.ProviderRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,8 +50,8 @@ public class ProviderServiceImpTest {
 
         when(providerRepository.existsByName("GoodMan")).thenReturn(true);
 
-        ProviderExistsException exception = assertThrows(
-                ProviderExistsException.class,
+        EntityExistsException exception = assertThrows(
+                EntityExistsException.class,
                 () -> providerServiceImp.createProvider(request)
         );
 
@@ -107,7 +107,7 @@ public class ProviderServiceImpTest {
 
         when(providerRepository.findById(providerId)).thenReturn(Optional.empty());
 
-        assertThrows(ProviderNotExistsException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> providerServiceImp.updateProviderById(providerId, request));
 
         verify(providerRepository, never()).save(any());
@@ -125,7 +125,7 @@ public class ProviderServiceImpTest {
         when(providerRepository.existsByName("ConflictName")).thenReturn(true);
 
         // 3. Assert
-        assertThrows(ProviderExistsException.class,
+        assertThrows(EntityExistsException.class,
                 () -> providerServiceImp.updateProviderById(providerId, request));
 
         verify(providerRepository, never()).save(any());
