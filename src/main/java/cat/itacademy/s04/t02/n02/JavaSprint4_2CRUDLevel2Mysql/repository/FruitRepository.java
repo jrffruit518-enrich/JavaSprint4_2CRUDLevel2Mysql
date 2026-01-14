@@ -8,4 +8,5 @@ import java.util.List;
 public interface FruitRepository extends JpaRepository<Fruit, Long> {
     List<Fruit> findByProviderId(Long providerId);
     List<Fruit> findByProviderName(String providerName);
+    long countByProviderId(Long providerId);
 }

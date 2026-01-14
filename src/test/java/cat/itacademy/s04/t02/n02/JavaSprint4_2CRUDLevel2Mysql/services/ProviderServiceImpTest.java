@@ -5,6 +5,7 @@ import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderRespon
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.entities.Provider;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ResourceExistsException;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ResourceNotFoundException;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.FruitRepository;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.ProviderRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,8 @@ import static org.mockito.Mockito.*;
 public class ProviderServiceImpTest {
     @Mock
     private ProviderRepository providerRepository;
+    @Mock
+    private FruitRepository fruitRepository;
 
     @InjectMocks
     private ProviderServiceImp providerServiceImp;
@@ -129,6 +132,50 @@ public class ProviderServiceImpTest {
                 () -> providerServiceImp.updateProviderById(providerId, request));
 
         verify(providerRepository, never()).save(any());
+    }
+
+    @Test
+    void delete_WhenIdExistsAndNoFruits_ShouldInvokeDelete() {
+        // Arrange
+        Long id = 1L;
+        when(providerRepository.existsById(id)).thenReturn(true);
+        when(fruitRepository.countByProviderId(id)).thenReturn(0L);
+
+        // Act
+        providerServiceImp.deleteProviderById(id);
+
+        // Assert
+        verify(providerRepository, times(1)).deleteById(id);
+    }
+
+    @Test
+    void delete_WhenIdDoesNotExist_ShouldThrowNotFound() {
+        // Arrange
+        Long id = 99L;
+        when(providerRepository.existsById(id)).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> {
+            providerServiceImp.deleteProviderById(id);
+        });
+        verify(providerRepository, never()).deleteById(anyLong());
+    }
+
+    @Test
+    void delete_WhenFruitsAreAssociated_ShouldThrowBadRequest() {
+        // Arrange
+        Long id = 1L;
+        when(providerRepository.existsById(id)).thenReturn(true);
+        when(fruitRepository.countByProviderId(id)).thenReturn(5L); // 验收标准：有5个水果关联
+
+        // Act & Assert
+        // 这里我们假设你定义了一个 GenericBusinessException 或使用 IllegalArgumentException
+        // 映射到 400 Bad Request
+        assertThrows(RuntimeException.class, () -> {
+            providerServiceImp.deleteProviderById(id);
+        });
+
+        verify(providerRepository, never()).deleteById(id);
     }
 
 

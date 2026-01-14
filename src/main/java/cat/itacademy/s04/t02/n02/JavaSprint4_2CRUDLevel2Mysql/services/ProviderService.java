@@ -8,5 +8,5 @@ public interface ProviderService {
     ProviderResponse createProvider(ProviderRequest request);
     //ProviderResponse findByName(String name);
     ProviderResponse updateProviderById(Long id,ProviderRequest request);
-    void deleteProviderByName(String name);
+    void deleteProviderById(Long id) ;
 }

@@ -5,6 +5,7 @@ import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderRespon
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.entities.Provider;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ResourceExistsException;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ResourceNotFoundException;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.FruitRepository;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.ProviderRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class ProviderServiceImp implements ProviderService{
     private final ProviderRepository providerRepository;
+    private final FruitRepository fruitRepository;
 
     @Override
     @Transactional
@@ -30,6 +32,8 @@ public class ProviderServiceImp implements ProviderService{
 
         return response;
     }
+
+
 
 
     @Override
@@ -50,7 +54,16 @@ public class ProviderServiceImp implements ProviderService{
     }
     @Override
     @Transactional
-    public void deleteProviderByName(String name) {
+    public void deleteProviderById(Long id) {
+        if (!providerRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Provider not found");
+        }
+
+        if (fruitRepository.countByProviderId(id) > 0) {
+            throw new IllegalArgumentException("Cannot delete: Provider is currently associated with fruits.");
+        }
+
+        providerRepository.deleteById(id);
 
     }
 
