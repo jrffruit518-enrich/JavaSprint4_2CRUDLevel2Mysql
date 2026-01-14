@@ -7,6 +7,6 @@ import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderRespon
 public interface ProviderService {
     ProviderResponse createProvider(ProviderRequest request);
     //ProviderResponse findByName(String name);
-    ProviderResponse updateProviderByName(String name,ProviderRequest request);
+    ProviderResponse updateProviderById(Long id,ProviderRequest request);
     void deleteProviderByName(String name);
 }

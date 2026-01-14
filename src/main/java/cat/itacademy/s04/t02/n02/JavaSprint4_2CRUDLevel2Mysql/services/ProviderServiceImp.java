@@ -8,7 +8,6 @@ import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.Provide
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -37,7 +36,7 @@ public class ProviderServiceImp implements ProviderService{
     }*/
 
     @Override
-    public ProviderResponse updateProviderByName(String name, ProviderRequest request) {
+    public ProviderResponse updateProviderById(Long id, ProviderRequest request) {
         return null;
     }
 

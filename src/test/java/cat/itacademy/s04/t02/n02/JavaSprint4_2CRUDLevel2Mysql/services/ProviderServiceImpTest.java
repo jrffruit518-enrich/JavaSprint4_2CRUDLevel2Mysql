@@ -4,12 +4,15 @@ import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderReques
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderResponse;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.entities.Provider;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ProviderExistsException;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ProviderNotExistsException;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.ProviderRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -69,6 +72,62 @@ public class ProviderServiceImpTest {
         assertEquals("Provider name cannot be blank", exception.getMessage());
 
         verify(providerRepository, never()).existsByName(any());
+        verify(providerRepository, never()).save(any());
+    }
+
+    @Test
+    void update_WhenIdExistsAndNameUnique_ShouldUpdateProvider() {
+        // 1. Prepare existing entity and update request
+        Long providerId = 1L;
+        Provider existingProvider = new Provider(providerId, "OldName", "Spain");
+        ProviderRequest updateRequest = new ProviderRequest("NewName", "France");
+
+        // 2. Define Mock behaviors
+        // Mock finding the original provider
+        when(providerRepository.findById(providerId)).thenReturn(Optional.of(existingProvider));
+        // Mock checking name conflict (it should not exist)
+        when(providerRepository.existsByName("NewName")).thenReturn(false);
+        // Mock saving the updated entity
+        when(providerRepository.save(any(Provider.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // 3. Execute
+        ProviderResponse response = providerServiceImp.updateProviderById(providerId, updateRequest);
+
+        // 4. Assertions
+        assertNotNull(response);
+        assertEquals("NewName", response.name());
+        assertEquals("France", response.country());
+        verify(providerRepository).save(any(Provider.class));
+    }
+
+    @Test
+    void update_WhenIdNotFound_ShouldThrowException() {
+        Long providerId = 99L;
+        ProviderRequest request = new ProviderRequest("AnyName", "AnyCountry");
+
+        when(providerRepository.findById(providerId)).thenReturn(Optional.empty());
+
+        assertThrows(ProviderNotExistsException.class,
+                () -> providerServiceImp.updateProviderById(providerId, request));
+
+        verify(providerRepository, never()).save(any());
+    }
+
+    @Test
+    void update_WhenNewNameAlreadyExists_ShouldThrowException() {
+        // 1. Prepare data
+        Long providerId = 1L;
+        Provider existingProvider = new Provider(providerId, "OriginalName", "Spain");
+        ProviderRequest request = new ProviderRequest("ConflictName", "Spain");
+
+        // 2. Mock: Finding exists but new name is taken by someone else
+        when(providerRepository.findById(providerId)).thenReturn(Optional.of(existingProvider));
+        when(providerRepository.existsByName("ConflictName")).thenReturn(true);
+
+        // 3. Assert
+        assertThrows(ProviderExistsException.class,
+                () -> providerServiceImp.updateProviderById(providerId, request));
+
         verify(providerRepository, never()).save(any());
     }
 
