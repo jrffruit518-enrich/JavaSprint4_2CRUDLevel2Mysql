@@ -23,16 +23,7 @@ public class FruitServiceImp implements FruitService{
 
     @Override
     public FruitResponse createFruit(FruitRequest request) {
-// Validate the incoming request object
-        Objects.requireNonNull(request, "Request cannot be null");
-
-        if (request.name() == null || request.name().isBlank()) {
-            throw new IllegalArgumentException("Fruit name cannot be empty");
-        }
-
-        /** * Fetch the Provider entity from database.
-         * Direct use of findById is more efficient than existsById + findById.
-         */
+    // Business Logic: The provider must exist in our system to associate it with a fruit
         Provider provider = providerRepository.findById(request.providerId())
                 .orElseThrow(() -> new ProviderNotExistsException("Provider does not exist with ID: " + request.providerId()));
 
@@ -48,9 +39,6 @@ public class FruitServiceImp implements FruitService{
 
     @Override
     public List<FruitResponse> findFruitsByProviderName(String name) {
-        if (name==null||name.trim().isBlank()) {
-            throw new IllegalArgumentException("Provider name cannot be empty");
-        }
         if (!providerRepository.existsByName(name)) {
             throw new ProviderNotExistsException("Provider does not exist with name: " + name);
         };

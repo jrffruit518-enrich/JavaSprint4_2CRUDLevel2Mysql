@@ -17,10 +17,6 @@ public class ProviderServiceImp implements ProviderService{
 
     @Override
     public ProviderResponse createProvider(ProviderRequest request) {
-        Objects.requireNonNull(request,"Request cannot be null");
-        if (request.name()==null||request.name().isBlank()) {
-            throw new IllegalArgumentException("Provider name cannot be empty");
-        }
         if (providerRepository.existsByName(request.name())) {
             throw new ProviderExistsException("Provider already exists.");
         }
