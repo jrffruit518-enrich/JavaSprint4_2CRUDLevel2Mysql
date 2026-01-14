@@ -2,7 +2,7 @@ package cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.controllers;
 
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.FruitRequest;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.FruitResponse;
-import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.EntityNotFoundException;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ResourceNotFoundException;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.services.FruitService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +66,7 @@ public class FruitControllerTest {
 
         // Mock service to throw exception when provider is missing
         when(fruitService.createFruit(any(FruitRequest.class)))
-                .thenThrow(new EntityNotFoundException("Provider does not exist."));
+                .thenThrow(new ResourceNotFoundException("Provider does not exist."));
 
         // Execute and Verify
         mockMvc.perform(post("/fruits")
@@ -111,7 +111,7 @@ public class FruitControllerTest {
 
         // Mock the service to throw the custom exception
         when(fruitService.findFruitsByProviderName(providerName))
-                .thenThrow(new EntityNotFoundException("Provider not found"));
+                .thenThrow(new ResourceNotFoundException("Provider not found"));
 
         // Perform GET request and Assert
         mockMvc.perform(get("/fruit/by-provider/{name}", providerName))

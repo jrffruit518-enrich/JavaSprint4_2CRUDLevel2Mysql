@@ -4,7 +4,7 @@ import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.FruitRequest;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.FruitResponse;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.entities.Fruit;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.entities.Provider;
-import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.EntityNotFoundException;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ResourceNotFoundException;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.FruitRepository;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.repository.ProviderRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -74,7 +74,7 @@ public class FruitServiceImpTest {
         when(providerRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
 
-        assertThrows(EntityNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             fruitService.createFruit(request);
         });
 
@@ -125,7 +125,7 @@ public class FruitServiceImpTest {
         when(providerRepository.existsByName(unknownProvider)).thenReturn(false);
 
         // 3. Execution & Assertion
-        assertThrows(EntityNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             fruitService.findFruitsByProviderName(unknownProvider);
         });
 

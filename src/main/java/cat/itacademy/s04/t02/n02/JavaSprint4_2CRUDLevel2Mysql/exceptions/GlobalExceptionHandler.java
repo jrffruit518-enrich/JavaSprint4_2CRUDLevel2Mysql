@@ -17,15 +17,24 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(500, exception.getMessage(), LocalDateTime.now());
     }
 
-    @ExceptionHandler(EntityExistsException.class)
+    @ExceptionHandler(ResourceExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleProviderExists(EntityExistsException e) {
-        return new ErrorResponse(409, e.getMessage(), LocalDateTime.now());
+    public ErrorResponse handleResourceExists(ResourceExistsException e) {
+        return new ErrorResponse(
+                HttpStatus.CONFLICT.value(), // 409
+                e.getMessage(),
+                LocalDateTime.now()
+        );
     }
-    @ExceptionHandler(EntityNotFoundException.class)
+
+    @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleProviderNotExists(EntityNotFoundException e) {
-        return new ErrorResponse(404, e.getMessage(), LocalDateTime.now());
+    public ErrorResponse handleResourceNotFound(ResourceNotFoundException e) {
+        return new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(), // 404
+                e.getMessage(),
+                LocalDateTime.now()
+        );
     }
 
 

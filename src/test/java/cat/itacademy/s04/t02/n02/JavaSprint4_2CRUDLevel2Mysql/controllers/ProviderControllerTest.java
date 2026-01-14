@@ -2,7 +2,7 @@ package cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.controllers;
 
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderRequest;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.DTO.ProviderResponse;
-import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.EntityExistsException;
+import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.exceptions.ResourceExistsException;
 import cat.itacademy.s04.t02.n02.JavaSprint4_2CRUDLevel2Mysql.services.ProviderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,7 @@ public class ProviderControllerTest {
         ProviderRequest request = new ProviderRequest("DuplicateName", "Spain");
 
         when(providerService.createProvider(any(ProviderRequest.class)))
-                .thenThrow(new EntityExistsException("Provider already exists."));
+                .thenThrow(new ResourceExistsException("Provider already exists."));
 
         mockMvc.perform(post("/providers")
                         .contentType(MediaType.APPLICATION_JSON)
