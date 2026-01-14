@@ -1,0 +1,37 @@
+services:
+  # 数据库服务
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: mytest
+      MYSQL_ROOT_PASSWORD: 888888
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql  # 挂载到容器内 MySQL 默认的数据存放路径
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # Spring Boot 应用服务
+  app:
+    build: .
+    container_name: fruit-api-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/mytest?createDatabaseIfNotExist=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 888888
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+# --- 千万别漏了下面这两行！ ---
+volumes:
+  mysql_data:
