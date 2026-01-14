@@ -15,6 +15,12 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 // --- 修正后的静态导入 ---
+import java.util.List;
+// For building the request (GET, POST, etc.)
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+
+// For asserting the results (Status, JSON body, etc.)
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post; // 关键：使用 Servlet 版本的 post
@@ -81,6 +87,39 @@ public class FruitControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getFruitsByProvider_WhenExists_ShouldReturn200() throws Exception {
+        // Prepare mock data
+        String providerName = "AppleCorp";
+        FruitResponse response = new FruitResponse(1L, "Apple", 10, 1L, providerName);
+
+        // Define Service behavior
+        when(fruitService.findFruitsByProviderName(providerName)).thenReturn(List.of(response));
+
+        // Perform GET request and Assert
+        mockMvc.perform(get("/fruit/by-provider/{name}", providerName)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Apple"))
+                .andExpect(jsonPath("$[0].providerName").value(providerName));
+    }
+
+    @Test
+    void getFruitsByProvider_WhenNotExists_ShouldReturn404() throws Exception {
+        String providerName = "NonExistent";
+
+        // Mock the service to throw the custom exception
+        when(fruitService.findFruitsByProviderName(providerName))
+                .thenThrow(new ProviderNotExistsException("Provider not found"));
+
+        // Perform GET request and Assert
+        mockMvc.perform(get("/fruit/by-provider/{name}", providerName))
+                .andExpect(status().isNotFound())
+                // Check if GlobalExceptionHandler works
+                .andExpect(jsonPath("$.message").value("Provider not found"))
+                .andExpect(jsonPath("$.status").value(404));
     }
 
 }
