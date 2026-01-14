@@ -61,6 +61,8 @@ public class FruitServiceImp implements FruitService{
                 .toList();
     }
 
+
+
     private FruitResponse getFruitResponse(Fruit fruit) {
         return new FruitResponse(
                 fruit.getId(),
@@ -69,4 +71,5 @@ public class FruitServiceImp implements FruitService{
                 fruit.getProvider().getId(),
                 fruit.getProvider().getName());
             }
+
 }
